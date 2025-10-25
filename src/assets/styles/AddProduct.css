@@ -1,0 +1,111 @@
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px; /* Add some padding for smaller screens */
+  box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+.form-card {
+  background: #fff;
+  padding: 30px; /* Increased padding */
+  width: 100%; /* Make it flexible */
+  max-width: 450px; /* Max width for larger screens */
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+  box-sizing: border-box;
+}
+
+.form-logo-container {
+  text-align: center;
+  margin-bottom: 20px; /* Space between logo and title */
+}
+
+.form-logo {
+  max-width: 80px; /* Adjust logo size as needed */
+  height: auto;
+  border-radius: 50%; /* If your logo is circular */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the logo */
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 25px; /* Increased margin */
+  font-size: 24px; /* Larger title */
+  font-weight: 700; /* Bolder title */
+  color: #1a202c; /* Darker title color */
+}
+
+form label {
+  display: block; /* Make labels appear on their own line */
+  margin-bottom: 8px; /* Space between label and input */
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+form input,
+form textarea,
+form select,
+form button {
+  width: 100%;
+  margin-bottom: 15px; /* Increased margin */
+  padding: 12px; /* Increased padding */
+  border: 1px solid #e2e8f0; /* Lighter border */
+  border-radius: 8px;
+  font-size: 15px; /* Slightly larger font */
+  box-sizing: border-box; /* Ensures padding doesn't increase total width */
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+  outline: none;
+  border-color: #4299e1; /* Blue highlight on focus */
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Subtle glow on focus */
+}
+
+form textarea {
+  resize: vertical; /* Allow vertical resizing */
+  height: 100px; /* Slightly increased default height */
+}
+
+form button {
+  background: #003366;
+  color: #fff;
+  font-weight: 600; /* Bolder text */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition */
+  margin-top: 20px; /* More space above button */
+  padding: 12px 20px; /* Adjust button padding */
+}
+
+form button:hover {
+  background: #002244;
+}
+
+.image-preview {
+  text-align: center;
+  margin: 15px 0; /* Adjusted margin */
+  padding: 10px;
+  background: #f7fafc; /* Light background for preview area */
+  border-radius: 8px;
+  border: 1px dashed #e2e8f0; /* Dashed border */
+}
+
+.image-preview img {
+  max-width: 120px; /* Larger preview image */
+  max-height: 120px;
+  border-radius: 8px; /* Slightly larger border-radius */
+  object-fit: contain; /* Ensures the image fits without cropping */
+}
+
+.error {
+  color: #e53e3e; /* Redder error color */
+  font-size: 13px; /* Slightly larger error font */
+  margin-top: -10px; /* Pull error message closer to input */
+  margin-bottom: 10px; /* Space below error message */
+  padding-left: 5px; /* Slight indent */
+}

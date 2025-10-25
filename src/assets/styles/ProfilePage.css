@@ -1,0 +1,131 @@
+.profile-page {
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.verified-tick {
+  color: #1e90ff;
+  font-size: 1.3rem;
+  margin-left: 6px;
+}
+
+.profile-form {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #2d3436;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+input:disabled {
+  background: #f1f2f6;
+}
+
+.password-section {
+  margin-top: 25px;
+}
+
+.save-btn {
+  background: #0984e3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+}
+
+.save-btn[disabled] {
+  background: #b2bec3;
+  cursor: not-allowed;
+}
+
+.save-btn:hover:not([disabled]) {
+  background: #74b9ff;
+}
+
+.verify-section {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.verify-btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1rem;
+}
+
+.verify-btn.verify {
+  background: #00b894;
+}
+
+.verify-btn.unverify {
+  background: #d63031;
+}
+
+.verify-btn:hover {
+  opacity: 0.85;
+}
+
+.message {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.message.success {
+  color: #00b894;
+  background: #eafaf1;
+}
+
+.message.error {
+  color: #d63031;
+  background: #ffeaea;
+}
+
+.no-user {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.login-btn {
+  background: #0984e3;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 15px;
+}
