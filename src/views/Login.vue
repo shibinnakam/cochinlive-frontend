@@ -74,7 +74,6 @@
 </template>
 
 <script>
-// eslint-disable-next-line vue/multi-word-component-names
 import axios from "axios";
 import "@/assets/styles/Login.css";
 
@@ -89,7 +88,11 @@ export default {
       emailError: "",
       passwordError: "",
       loading: false,
-      API_BASE: "http://localhost:5000/api/auth",
+      // 👇 Auto-detect environment (local vs Render)
+      API_BASE:
+        window.location.hostname === "localhost"
+          ? "http://localhost:5000/api/auth"
+          : "https://cochin-backendfinal.onrender.com/api/auth",
     };
   },
   computed: {
@@ -147,7 +150,7 @@ export default {
             email: this.email,
           });
           alert(
-            data.msg || "A password setup link has been sent to your email.",
+            data.msg || "A password setup link has been sent to your email."
           );
           this.toggleMode();
         } else {
@@ -161,7 +164,6 @@ export default {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
 
-          // Dynamic login message
           alert(`${data.user.role.toUpperCase()} login successful!`);
 
           // Redirect based on role
@@ -182,7 +184,8 @@ export default {
       } catch (err) {
         console.error("Auth error:", err);
         alert(
-          err.response?.data?.msg || "Something went wrong. Please try again.",
+          err.response?.data?.msg ||
+            "Something went wrong. Please try again later."
         );
       } finally {
         this.loading = false;
@@ -196,11 +199,7 @@ export default {
 </script>
 
 <style scoped>
-/* NOTE: The complex template imports styles via 'import "@/assets/styles/Login.css";'.
-   This scoped style block below is taken from the simpler, corrupted version and is 
-   likely NOT needed, but is included here just in case. If you use the imported CSS, 
-   you can delete the entire <style> block below.
-*/
+/* Local fallback style (main styles come from imported CSS) */
 .auth-container {
   display: flex;
   height: 100vh;
