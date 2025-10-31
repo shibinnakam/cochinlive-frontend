@@ -150,7 +150,7 @@ export default {
             email: this.email,
           });
           alert(
-            data.msg || "A password setup link has been sent to your email."
+            data.msg || "A password setup link has been sent to your email.",
           );
           this.toggleMode();
         } else {
@@ -185,7 +185,7 @@ export default {
         console.error("Auth error:", err);
         alert(
           err.response?.data?.msg ||
-            "Something went wrong. Please try again later."
+            "Something went wrong. Please try again later.",
         );
       } finally {
         this.loading = false;

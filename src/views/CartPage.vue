@@ -168,18 +168,16 @@ export default {
         );
 
         this.cartCount = this.cartItems.reduce((sum, i) => sum + i.quantity, 0);
-
         alert("❌ Item removed from cart");
       } catch (err) {
         console.error("Error removing item:", err);
       }
     },
 
-    // ✅ Purchase button logic — checks DB for verification
+    // ✅ Purchase with Razorpay
     async purchaseItems() {
       try {
         const storedUser = localStorage.getItem("user");
-
         if (!storedUser) {
           alert("Please log in to proceed with purchase.");
           return this.$router.push("/login");
@@ -194,55 +192,94 @@ export default {
           return this.$router.push("/login");
         }
 
-        // ✅ STEP 1: Check DB for verification (correct backend route)
+        // ✅ Verify user
         const userRes = await axios.get(
           `http://localhost:5000/api/auth/user/${userId}`,
         );
         const dbUser = userRes.data.user;
-
-        if (
-          !dbUser ||
-          dbUser.isVerified === false ||
-          dbUser.verificationStatus !== "verified"
-        ) {
+        if (!dbUser || dbUser.verificationStatus !== "verified") {
           alert(
             "⚠️ Your account is not verified. You cannot purchase products.",
           );
           return;
         }
 
-        // ✅ STEP 2: Ensure cart not empty
+        // ✅ Ensure cart not empty
         if (this.cartItems.length === 0) {
           alert("Your cart is empty!");
           return;
         }
 
-        // ✅ STEP 3: Confirm purchase
-        const confirmPurchase = confirm(
-          `Confirm purchase of ₹${this.totalPrice}?`,
-        );
-        if (!confirmPurchase) return;
-
-        // ✅ STEP 4: Create order
-        const orderRes = await axios.post(
-          "http://localhost:5000/api/orders/create",
+        // ✅ Create Razorpay order
+        const orderResponse = await axios.post(
+          "http://localhost:5000/api/payment/create-order",
           {
-            userId,
-            items: this.cartItems,
-            totalAmount: this.totalPrice,
+            amount: this.totalPrice,
+            currency: "INR",
           },
         );
 
-        if (orderRes.data.success) {
-          alert("✅ Purchase successful!");
-          this.cartItems = [];
-          this.cartCount = 0;
-        } else {
-          alert("❌ Purchase failed. Please try again.");
+        if (!orderResponse.data.success) {
+          alert("❌ Failed to create Razorpay order.");
+          return;
         }
+
+        const { order } = orderResponse.data;
+
+        // ✅ Razorpay checkout
+        const options = {
+          key: "rzp_test_RY9Q2AOVbzE0La", // your Razorpay test key
+          amount: order.amount,
+          currency: order.currency,
+          name: "Cochin Live Store",
+          description: "Payment for your order",
+          order_id: order.id,
+          handler: async (response) => {
+            try {
+              // ✅ Verify payment
+              const verifyRes = await axios.post(
+                "http://localhost:5000/api/payment/verify",
+                {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                },
+              );
+
+              if (verifyRes.data.success) {
+                // ✅ Create order in DB
+                await axios.post("http://localhost:5000/api/orders/create", {
+                  userId,
+                  items: this.cartItems,
+                  totalAmount: this.totalPrice,
+                  paymentId: response.razorpay_payment_id,
+                });
+
+                alert("✅ Payment successful! Order placed.");
+                this.cartItems = [];
+                this.cartCount = 0;
+              } else {
+                alert("❌ Payment verification failed!");
+              }
+            } catch (err) {
+              console.error("❌ Error during payment verification:", err);
+              alert("Payment verification failed!");
+            }
+          },
+          prefill: {
+            name: dbUser.name || "Customer",
+            email: dbUser.email || "",
+          },
+          theme: {
+            color: "#22bb33",
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
       } catch (error) {
-        console.error("❌ Error verifying user or completing purchase:", error);
-        alert("Server error while verifying user. Please try again later.");
+        console.error("❌ Payment error:", error);
+        alert("Something went wrong while processing your payment.");
       }
     },
   },

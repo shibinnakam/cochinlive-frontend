@@ -10,20 +10,15 @@
         <li @click="showSection('dashboard')">
           <a href="#"><i class="fas fa-home"></i> Dashboard</a>
         </li>
-
-        <!-- ✅ Show Profile in same screen -->
         <li @click="showSection('profile')">
           <a href="#"><i class="fas fa-user"></i> Profile</a>
         </li>
-
-        <!-- ✅ Show Cart in same screen -->
         <li @click="showSection('cart')">
           <a href="#">
             <i class="fas fa-shopping-cart"></i>
             Cart ({{ cartCount }})
           </a>
         </li>
-
         <li>
           <a href="#" @click.prevent="logout">
             <i class="fas fa-sign-out-alt"></i> Logout
@@ -93,6 +88,41 @@
           </div>
 
           <div v-else class="no-products">No products available.</div>
+
+          <!-- ✅ Recommended Products Section -->
+          <div
+            v-if="recommendedProducts.length > 0"
+            class="recommended-section"
+          >
+            <h3 class="section-title">Recommended for You</h3>
+            <div class="products-grid">
+              <div
+                v-for="r in recommendedProducts"
+                :key="r._id"
+                class="product-card"
+              >
+                <div class="product-media">
+                  <img :src="`http://localhost:5000${r.image}`" :alt="r.name" />
+                </div>
+                <div class="product-info">
+                  <h3>{{ r.name }}</h3>
+                  <p class="description">{{ r.description }}</p>
+                </div>
+                <div class="price-section">
+                  <span class="discount-price">₹{{ r.discountPrice }}</span>
+                  <span
+                    class="original-price"
+                    v-if="r.discountPrice < r.originalPrice"
+                  >
+                    ₹{{ r.originalPrice }}
+                  </span>
+                </div>
+                <button class="cart-btn" @click="addToCart(r._id)">
+                  <i class="fas fa-cart-plus"></i> Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- ✅ Profile Section -->
@@ -113,7 +143,7 @@
 import api from "@/axios";
 import "@/assets/styles/UserPage.css";
 import ProfilePage from "@/views/ProfilePage.vue";
-import CartPage from "@/views/CartPage.vue"; // ✅ Import cart component
+import CartPage from "@/views/CartPage.vue";
 
 export default {
   name: "UserPage",
@@ -121,6 +151,7 @@ export default {
   data() {
     return {
       products: [],
+      recommendedProducts: [], // ✅ new
       cartCount: 0,
       sidebarOpen: false,
       activeSection: "dashboard",
@@ -131,7 +162,6 @@ export default {
     await this.fetchProducts();
   },
   methods: {
-    // ✅ Switch between sections
     showSection(section) {
       this.activeSection = section;
       this.closeSidebar();
@@ -161,7 +191,19 @@ export default {
       }
     },
 
-    // ✅ Add product to cart
+    // ✅ Fetch recommendations for selected product
+    async fetchRecommendations(productId) {
+      try {
+        const res = await api.get(`/recommend/${productId}`);
+        if (res.data.success) {
+          this.recommendedProducts = res.data.recommendations;
+        }
+      } catch (err) {
+        console.error("Error fetching recommendations:", err);
+      }
+    },
+
+    // ✅ Add product to cart and trigger recommendations
     async addToCart(productId) {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -181,6 +223,7 @@ export default {
         if (res.data.success) {
           await this.loadCartCount();
           alert("✅ Item added to cart!");
+          await this.fetchRecommendations(productId); // ✅ show similar items
         } else {
           alert("⚠️ Could not add item to cart.");
         }
@@ -210,9 +253,21 @@ export default {
           : 0;
       } catch (err) {
         console.error("Error loading cart:", err);
-        // ⚠️ Removed logout on failure to avoid unexpected logouts
       }
     },
   },
 };
 </script>
+
+<style scoped>
+.recommended-section {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+}
+
+.recommended-section h3 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+</style>
